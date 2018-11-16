@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe UsersController, type: :controller do
+
+  let!(:user) { User.create!(username: 'username', password: 'password') }
   
   describe 'GET #index' do
     it 'renders the /users page' do
@@ -11,7 +13,7 @@ RSpec.describe UsersController, type: :controller do
   
   describe 'GET #show' do
     it 'renders an individual user page' do
-      get :show, params: { id: 1 }
+      get :show, params: { id: user.id }
       expect(response).to render_template(:show)
     end
   end
@@ -25,7 +27,7 @@ RSpec.describe UsersController, type: :controller do
   
   describe 'GET #edit' do
     it 'renders the edit user page' do
-      get :edit, params: { id: 1 }
+      get :edit, params: { id: user.id }
       expect(response).to render_template(:edit)
     end
   end
@@ -54,14 +56,8 @@ RSpec.describe UsersController, type: :controller do
   end
     
   describe 'PATCH #update' do
-    
-    before(:each) do
-      let(:user) { User.create!(username: 'username', password: 'password') }
-    end
-
     context 'with valid params' do
       it 'updates user' do
-        # user = User.create!(username: 'username', password: 'password')
         patch :update, params: { id: user.id, user: { username: 'updated_username', password: 'password' } }
         user = User.find_by(username: 'updated_username')
         
@@ -72,7 +68,6 @@ RSpec.describe UsersController, type: :controller do
     
     context 'with invalid params' do
       it 'does not update user and renders the edit page again' do
-        # user = User.create!(username: 'username', password: 'password')
         patch :update, params: { id: user.id, user: { username: '', password: 'password' } }
         user = User.find_by(username: '')
         
@@ -85,9 +80,8 @@ RSpec.describe UsersController, type: :controller do
   
   describe 'DELETE #destroy' do
     it 'removes user from database' do
-      # user = User.create!(username: 'username', password: 'password')
       delete :destroy, params: { id: user.id }
-      
+  
       expect { User.find(user.id) }.to raise_error
       expect(response).to redirect_to(new_user_url)
     end
