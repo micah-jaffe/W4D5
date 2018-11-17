@@ -24,18 +24,37 @@ end
 
 feature 'logging in' do
   scenario 'shows username on the homepage after login' do
-    user = User.create!(username: 'pass_specs', password: 'password')
-    visit user_url(user)
-    expect(page).to have_content("pass_specs")
+    User.create!(username: 'logger_in', password: 'password')
+    
+    visit new_session_url
+    fill_in('Username:', with: 'logger_in')
+    fill_in('Password:', with: 'password')
+    click_button('Login')
+    
+    expect(page).to have_content('logger_in')
+    expect(page).to have_current_path(user_url(User.find_by(username: 'logger_in')))
   end
 
 end
 
 feature 'logging out' do
   scenario 'begins with a logged out state' do
-    
+    visit users_url
+    expect(page).to_not have_content('Logout')
   end
 
-  scenario 'doesn\'t show username on the homepage after logout'
-
+  scenario 'doesn\'t show username on the homepage after logout' do
+    User.create!(username: 'logger_in', password: 'password')
+    
+    visit new_session_url
+    fill_in('Username:', with: 'logger_in')
+    fill_in('Password:', with: 'password')
+    click_button('Login')
+    
+    click_button('Logout')
+    expect(page).to_not have_content('logger_in')
+    expect(page).to have_current_path(new_session_url)
+    
+  end
+    
 end
