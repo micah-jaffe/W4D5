@@ -34,6 +34,25 @@ feature 'logging in' do
     expect(page).to have_content('logger_in')
     expect(page).to have_current_path(user_url(User.find_by(username: 'logger_in')))
   end
+  
+  scenario 'responds appropriately to a failed login' do
+    User.create!(username: 'logger_in', password: 'password')
+    
+    visit new_session_url
+    fill_in('Username:', with: 'anything_else')
+    fill_in('Password:', with: 'password')
+    click_button('Login')
+    
+    expect(page).to have_content('Invalid credentials')
+    expect(page).to have_current_path(new_session_url)
+  end
+  
+  scenario 'cannot visit other user\'s pages if you are not logged in' do
+    user = User.create!(username: 'private_page', password: 'password')
+    visit user_url(user)
+    
+    expect(page).to have_current_path(new_session_url)
+  end
 
 end
 

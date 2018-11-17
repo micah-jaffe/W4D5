@@ -1,5 +1,6 @@
 Login
-<form action="<%= session_url %>" method="post">    
+<form action="<%= session_url %>" method="post">   
+  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>"> 
   <label>
     Username:
     <input type="text" name="user[username]" value="">
@@ -11,3 +12,5 @@ Login
   
   <input type="submit" name="" value="Login">
 </form>
+
+<%= flash[:error] %>
